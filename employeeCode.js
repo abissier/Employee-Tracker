@@ -62,3 +62,15 @@ function promptUser() {
             }
         });
 }
+//Add functions
+
+//View functions
+function viewAllDepartments() {
+    var query = "SELECT * FROM departments";
+    connection.query(query, function (err, res) {
+        for (var i = 0; i < res.length; i++) {
+            console.log(res[i].name);
+        }
+        promptUser();
+    });
+}
