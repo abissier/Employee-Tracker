@@ -111,16 +111,62 @@ function addNewRole() {
         }
         ]).then(function (answer) {
             var query = "INSERT INTO roles SET ?";
-            connection.query(query, { id: answer.id, title: answer.title, salary: answer.salary, department_id: answer.department_id }, function (err, res) {
-                console.log("               ");
-                console.table(`The ${answer.title} role was succesfully added to the roles table`)
-            });
+            connection.query(query,
+                {
+                    role_id: answer.id,
+                    title: answer.title,
+                    salary: answer.salary,
+                    department_id: answer.department_id
+                }, function (err, res) {
+                    console.log("               ");
+                    console.table(`The ${answer.title} role was succesfully added to the roles table`)
+                });
             promptUser();
         });
 };
 //---add new employee----
 function addNewEmployee() {
-
+    inquirer
+        .prompt([{
+            name: "departmentId",
+            type: "input",
+            message: "Please enter the employees department ID"
+        },
+        {
+            name: "firstName",
+            type: "input",
+            message: "Please enter the employee's first name"
+        },
+        {
+            name: "lastName",
+            type: "input",
+            message: "Please enter the employee's last name"
+        },
+        {
+            name: "roleId",
+            type: "input",
+            message: "Please enter the role ID number"
+        },
+        {
+            name: "managerId",
+            type: "input",
+            message: "Please enter the manager ID number"
+        }
+        ]).then(function (answer) {
+            var query = "INSERT INTO employees SET ?";
+            connection.query(query,
+                {
+                    department_id: answer.departmentid,
+                    first_name: answer.firstName,
+                    last_name: answer.lastName,
+                    role_id: answer.role_id,
+                    manager_id: answer.managerId
+                }, function (err, res) {
+                    console.log("               ");
+                    console.table(`${answer.firstName} ${answer.lastName} was succesfully added to the employees table`)
+                });
+            promptUser();
+        });
 }
 //------------------View functions-----------------------------
 function viewAllDepartments() {
@@ -142,7 +188,9 @@ function viewAllRoles() {
 };
 
 function viewAllEmployees() {
-    var query = "SELECT * FROM employees";
+    var query = "SELECT  CONCAT(employees.first_name,' ', employees.last_name) AS employee_name, roles.title AS job_title, ";
+    query += "roles.salary, departments.name AS department FROM Employees INNER JOIN Roles ON ";
+    query += "employees.role_id=roles.role_id INNER JOIN Departments ON roles.department_id = departments.department_id";
     connection.query(query, function (err, res) {
         console.log("                ");
         console.table(res)
@@ -151,3 +199,6 @@ function viewAllEmployees() {
 };
 
 //----------------Update functions----------------------------
+function updateRoles() {
+
+}
