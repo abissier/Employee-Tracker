@@ -19,7 +19,7 @@ function promptUser() {
     inquirer
         .prompt({
             name: "action",
-            type: "rawlist",
+            type: "list",
             message: "What would you like to do?",
             choices: [
                 "Add a new department",
@@ -30,7 +30,8 @@ function promptUser() {
                 "View all employees",
                 "Update employee roles"
             ]
-        }).then(function (answer) {
+        })
+        .then(function (answer) {
             switch (answer.action) {
                 case "Add a new department":
                     addNewDepartment();
@@ -62,15 +63,91 @@ function promptUser() {
             }
         });
 }
-//Add functions
+//-------------------Add functions-------------------------
+//---add new department----
+function addNewDepartment() {
+    inquirer
+        .prompt([{
+            name: "department",
+            type: "input",
+            message: "What department would you like to add?"
+        },
+        {
+            name: "id",
+            type: "input",
+            message: "What is the id number for the new department?"
+        }
+        ]).then(function (answer) {
+            var query = "INSERT INTO departments SET ?";
+            connection.query(query, { id: answer.id, name: answer.department }, function (err, res) {
+                console.log("               ");
+                console.table(`${answer.department} succesfully added to the departments table`)
+            });
+            promptUser();
+        });
+};
+//----add new role----
+function addNewRole() {
+    inquirer
+        .prompt([{
+            name: "id",
+            type: "input",
+            message: "Please enter the role ID"
+        },
+        {
+            name: "title",
+            type: "input",
+            message: "Please enter the role title"
+        },
+        {
+            name: "salary",
+            type: "input",
+            message: "Please enter the role salary"
+        },
+        {
+            name: "department_id",
+            type: "input",
+            message: "Please enter the department ID number"
+        }
+        ]).then(function (answer) {
+            var query = "INSERT INTO roles SET ?";
+            connection.query(query, { id: answer.id, title: answer.title, salary: answer.salary, department_id: answer.department_id }, function (err, res) {
+                console.log("               ");
+                console.table(`The ${answer.title} role was succesfully added to the roles table`)
+            });
+            promptUser();
+        });
+};
+//---add new employee----
+function addNewEmployee() {
 
-//View functions
+}
+//------------------View functions-----------------------------
 function viewAllDepartments() {
     var query = "SELECT * FROM departments";
     connection.query(query, function (err, res) {
-        for (var i = 0; i < res.length; i++) {
-            console.log(res[i].name);
-        }
-        promptUser();
+        console.log("                ");
+        console.table(res);
     });
+    promptUser();
 }
+
+function viewAllRoles() {
+    var query = "SELECT * FROM roles";
+    connection.query(query, function (err, res) {
+        console.log("                ");
+        console.table(res)
+    });
+    promptUser();
+};
+
+function viewAllEmployees() {
+    var query = "SELECT * FROM employees";
+    connection.query(query, function (err, res) {
+        console.log("                ");
+        console.table(res)
+    });
+    promptUser();
+};
+
+//----------------Update functions----------------------------
