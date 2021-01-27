@@ -28,7 +28,7 @@ function promptUser() {
                 "View all departments",
                 "View all roles",
                 "View all employees",
-                "Update employee roles"
+                "Update employee role"
             ]
         })
         .then(function (answer) {
@@ -57,15 +57,15 @@ function promptUser() {
                     viewAllEmployees();
                     break;
 
-                case "Update employee roles":
-                    updateRoles();
+                case "Update employee role":
+                    updateRole();
                     break;
             }
         });
 }
 
-//-------------------Add functions-------------------------
-//---add new department----
+//-----------------------------------Add functions---------------------------------------
+//--------------add new department------------
 function addNewDepartment() {
     inquirer
         .prompt([
@@ -88,7 +88,8 @@ function addNewDepartment() {
             promptUser();
         });
 };
-//----add new role----
+
+//-----------------add new role--------------------
 function addNewRole() {
     inquirer
         .prompt([
@@ -126,7 +127,7 @@ function addNewRole() {
             promptUser();
         });
 };
-//---add new employee----
+//-------------add new employee----------
 function addNewEmployee() {
     connection.query("SELECT * FROM employees INNER JOIN roles ON employees.role_id=roles.role_id", function (err, res) {
         if (err) throw err;
@@ -189,6 +190,7 @@ function addNewEmployee() {
 }
 
 //------------------View functions-----------------------------
+//-----view departments---------
 function viewAllDepartments() {
     var query = "SELECT * FROM departments";
     connection.query(query, function (err, res) {
@@ -197,7 +199,7 @@ function viewAllDepartments() {
     });
     promptUser();
 }
-
+//-----view roles---------
 function viewAllRoles() {
     var query = "SELECT * FROM roles";
     connection.query(query, function (err, res) {
@@ -206,12 +208,13 @@ function viewAllRoles() {
     });
     promptUser();
 };
-
+//-----view employees---------
 function viewAllEmployees() {
     var query = "SELECT  CONCAT(employees.first_name,' ', employees.last_name) AS employee_name, roles.title AS job_title, ";
     query += "roles.salary, departments.name AS department FROM Employees INNER JOIN Roles ON ";
     query += "employees.role_id=roles.role_id INNER JOIN Departments ON roles.department_id = departments.department_id";
     connection.query(query, function (err, res) {
+        if (err) throw err;
         console.log("\n");
         console.table(res)
     });
@@ -219,27 +222,48 @@ function viewAllEmployees() {
 };
 
 //----------------Update functions----------------------------
-function updateRoles() {
-    connection.query("SELECT last_name FROM employees", function (err, res) {
+//-----update roles---------
+function updateRole() {
+    var query = "SELECT employee_id, role_id FROM employees";
+    connection.query(query, function (err, res) {
         if (err) throw err;
         inquirer
-            .prompt([{
-                name: "lastname",
-                type: "list",
-                message: "Please select the employee's last name for which you would like to change roles",
-                choices: function () {
-                    const lastName = [];
+            .prompt([
+                {
+                    name: "employeeID",
+                    type: "list",
+                    message: "Please select employee ID for which you would like to change roles",
+                    choices: function () {
+                        const employeeIdArray = [];
 
-                    for (var i = 0; i < res.length; i++) {
-                        lastName.push(res[i].last_name);
+                        for (var i = 0; i < res.length; i++) {
+                            employeeIdArray.push(res[i].employee_id);
+                        }
+
+                        return employeeIdArray;
                     }
-
-                    return lastName;
                 },
-            }
+                {
+                    name: "jobID",
+                    type: "list",
+                    message: "What is the new role ID?",
+                    choices: function () {
+                        const jobIdArray = [];
+
+                        for (var i = 0; i < res.length; i++) {
+                            if (!jobIdArray.includes(res[i].role_id)) {
+                                jobIdArray.push(res[i].role_id)
+                            }
+                        }
+                        return jobIdArray;
+                    }
+                },
             ]).then(function (answer) {
-                console.log(answer)
+                var query = "UPDATE employees SET role_id = ? WHERE employee_id = ?";
+                connection.query(query, [answer.jobID, answer.employeeID], function (err, res) {
+                    if (err) throw err;
+                });
+                promptUser();
             });
-    });
-    promptUser();
+    })
 }
