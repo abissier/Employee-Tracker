@@ -13,10 +13,13 @@ VALUES
     (10300, "Copywriter", 45000.00, 103),
     (10400, "System Administrator", 85000.00, 104);
 
-INSERT INTO employees (department_id, first_name, last_name, role_id, manager_id)
+INSERT INTO employees (employee_id, first_name, last_name, role_id, manager_id)
 VALUES 
-    (101, "Melissa", "Melba", 10100, null),
-    (102, "Darrin", "Abbot", 10200, null),
-    (103, "Wilburt", "Silva", 10300, null),
-    (104, "Dafina", "Kurti", 10400, null);
+    (011, "Melissa", "Melba", 10100, null),
+    (201, "Darrin", "Abbot", 10200, null),
+    (301, "Wilburt", "Silva", 10300, null),
+    (401, "Dafina", "Kurti", 10400, null);
 
+SELECT * FROM employees;
+SELECT * FROM roles;
+SELECT * FROM departments;
