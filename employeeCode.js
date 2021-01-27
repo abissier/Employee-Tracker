@@ -6,7 +6,7 @@ var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "",
+    password: "Riley@2",
     database: "employees_db"
 });
 
@@ -122,7 +122,7 @@ function addNewRole() {
                     department_id: answer.department_id
                 }, function (err, res) {
                     console.log("\n");
-                    console.table(`The ${answer.title} role was succesfully added to the roles table`)
+                    console.log(`The ${answer.title} role was succesfully added to the roles table`)
                 });
             promptUser();
         });
@@ -168,6 +168,9 @@ function addNewEmployee() {
                     message: "Please enter the manager ID number",
                 }
             ]).then(function (answer) {
+                if (answer.managerId === '') {
+                    answer.managerId = null;
+                }
                 connection.query("INSERT INTO employees SET ?",
 
                     {
@@ -175,16 +178,13 @@ function addNewEmployee() {
                         first_name: answer.firstName,
                         last_name: answer.lastName,
                         role_id: answer.roleId,
-                        manager_id: answer.managerId
-                    },
-                    function (err, res) {
-                        if (err) {
-                            console.log(err)
-                        } else {
-                            console.log(`${answer.firstName} ${answer.lastName} was succesfully added to the employees table`);
-                        };
+                        manager_id: answer.managerId,
+                    }, function (err, res) {
+                        if (err) throw err;
+
+                        console.log(`${answer.firstName} ${answer.lastName} was succesfully added to the employees table`);
                     });
-                promptUser();
+                    promptUser();
             });
     });
 }

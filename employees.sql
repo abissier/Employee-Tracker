@@ -45,6 +45,7 @@ INSERT INTO employees (employee_id, first_name, last_name, role_id, manager_id)
 VALUES 
     (011, "Melissa", "Melba", 10100, null),
     (201, "Darrin", "Abbot", 10200, null),
-    (301, "Wilburt", "Silva", 10300, null),
+    (301, "Wilburt", "Silva", 10300, 011),
     (401, "Dafina", "Kurti", 10400, null);
+
 
